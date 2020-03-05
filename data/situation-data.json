@@ -1,0 +1,54 @@
+{
+  "situations": [
+    {
+      "description": "You're feeling unwell...",
+      "yes": {
+        "result": "You went to the doctor and got some medicines",
+        "p_impact": 20,
+        "p_variance": 5,
+        "e_impact": 5,
+        "e_variance": 3
+      },
+      "no": {
+        "result": "You weren't able to afford to get medicines",
+        "p_impact": -15,
+        "p_variance": 5,
+        "e_impact": -10,
+        "e_variance": 5
+      },
+      "random": {
+        "result": "You were able to get free medicines at a SIFT clinic",
+        "p_impact": 25,
+        "p variance": 5,
+        "e_impact": 10,
+        "e_variance": 3,
+        "threshold": 0.6
+      }
+    },
+    {
+      "description": "A tropical storm affects your crops",
+      "yes": {
+        "result": "You have enough money from last year to be able to buy rice from the shops",
+        "p_impact": 10,
+        "p_variance": 5,
+        "e_impact": 0,
+        "e_variance": 0
+      },
+      "no": {
+        "result": "You have to survive on far less this year",
+        "p_impact": -10,
+        "p_variance": 5,
+        "e_impact": -5,
+        "e_variance": 5
+      },
+      "random": {
+        "result": "The community bands together and helps each other out",
+        "p_impact": 5,
+        "p variance": 2,
+        "e_impact": 5,
+        "e_variance": 3,
+        "threshold": 0.3
+      }
+    }
+  ]
+}

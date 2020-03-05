@@ -23,7 +23,7 @@ export default () => {
         ...players,
         ...Array.from(
           { length: selectedOption.value - players.length },
-          () => ({ name: '' })
+          () => ({ name: '', p_score: 50, e_score: 50 })
         )
       ])
     } else if (selectedOption.value < players.length) {
@@ -37,7 +37,7 @@ export default () => {
     const val = event.target.value
     const new_players = [
       ...players.slice(0, idx),
-      { name: val },
+      { name: val, p_score: 50, e_score: 50 },
       ...players.slice(idx + 1)
     ]
     setPlayers(new_players)
@@ -59,8 +59,8 @@ export default () => {
         'Please make sure that all of the players have different names'
       )
     } else {
-      setGamestate({ ...gamestate, stage: 'tutorial', substage: 0 })
-      router.push('/play')
+      setGamestate({ ...gamestate, stage: 'tutorial', round: -1, subround: -1 })
+      router.push('/tutorial')
     }
   }
 
@@ -82,14 +82,13 @@ export default () => {
             <form className="w-full mb-4">
               {players.map((player, index) => {
                 return (
-                  <div className="flex items-center">
+                  <div key={`player_${index}`} className="flex items-center">
                     <div className="w-1/3">
                       <label className="px-4">{`Player ${index + 1}:`}</label>
                     </div>
                     <div className="w-2/3">
                       <input
                         className="my-2 mx-2 px-2 py-2 border border-gray-400 rounded-md focus:border-2 focus:border-blue-400"
-                        id={`player_${index}`}
                         data_idx={index}
                         type="text"
                         value={player.name}

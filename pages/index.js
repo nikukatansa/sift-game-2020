@@ -6,20 +6,42 @@ export default () => {
   const router = useRouter()
   const [gamestate, setGamestate] = useLocalStorage('gamestate', {
     stage: 'lobby',
-    substage: 0
+    round: -1,
+    subround: -1,
+    lastcard: '',
+    lastresult: ''
   })
   const [players, setPlayers] = useLocalStorage('players', [])
 
   function continueGame() {
     console.log('User has chosen to continue existing game')
-    router.push('/play')
+    if (gamestate['stage'] === 'play') {
+      router.push('/play')
+    } else {
+      setGamestate({
+        ...gamestate,
+        stage: 'tutorial',
+        round: -1,
+        subround: -1,
+        lastcard: '',
+        lastresult: ''
+      })
+      router.push('/tutorial')
+    }
   }
 
   function newGame() {
     console.log('User has chosen to start a new game')
-    setGamestate({ ...gamestate, stage: 'lobby', substage: 0 })
+    setGamestate({
+      ...gamestate,
+      stage: 'lobby',
+      round: -1,
+      subround: -1,
+      lastcard: '',
+      lastresult: ''
+    })
     setPlayers([])
-    router.push('/loadparty')
+    router.push('/lobby')
   }
 
   return (
