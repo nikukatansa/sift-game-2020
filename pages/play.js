@@ -98,7 +98,7 @@ export default () => {
         <main className="max-w-lg mx-auto py-4 bg-white rounded-md">
           <div className="p-4">
             <h1 className="text-2xl font-bold mb-4 text-center">
-              Round {gamestate.round}
+              Round {gamestate.round + 1} of {situations.length}
             </h1>
             {gamestate.subround === -1 ? (
               <Situation
@@ -106,7 +106,7 @@ export default () => {
                 onAdvance={nextSubRound}
               />
             ) : gamestate.subround === 2 * players.length ? (
-              <PostRound onAdvance={nextRound} />
+              <PostRound data={players} onAdvance={nextRound} />
             ) : gamestate.subround % 2 === 0 ? (
               <Scanner
                 last={gamestate.lastcard}
