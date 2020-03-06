@@ -17,19 +17,23 @@ export default () => {
   ]
 
   const handleSelectChange = (selectedOption) => {
-    console.log('Selected option was:', selectedOption)
     if (selectedOption.value > players.length) {
       setPlayers([
         ...players,
         ...Array.from(
           { length: selectedOption.value - players.length },
-          () => ({ name: '', p_score: 50, e_score: 50 })
+          () => ({
+            name: '',
+            p_score: 50,
+            e_score: 50,
+            old_p_score: 50,
+            old_e_score: 50
+          })
         )
       ])
     } else if (selectedOption.value < players.length) {
       setPlayers(players.slice(0, selectedOption.value))
     }
-    console.log(players)
   }
 
   const handleNameInput = (event) => {
@@ -37,7 +41,7 @@ export default () => {
     const val = event.target.value
     const new_players = [
       ...players.slice(0, idx),
-      { name: val, p_score: 50, e_score: 50 },
+      { name: val, p_score: 50, e_score: 50, old_p_score: 50, old_e_score: 50 },
       ...players.slice(idx + 1)
     ]
     setPlayers(new_players)

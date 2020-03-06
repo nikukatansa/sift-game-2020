@@ -16,51 +16,46 @@ export default () => {
     setGamestate({ ...gamestate, subround: gamestate.subround + 1 })
   }
 
+  function updateScores(old_p_score, old_e_score, modifiers) {
+    let p_var = modifiers.p_variance * (2 * Math.random() - 1) // In range [-p_variance, +p_variance]
+    let e_var = modifiers.e_variance * (2 * Math.random() - 1) // In range [-e_variance, +e_variance]
+    let p_mod = modifiers.p_impact + p_var
+    let e_mod = modifiers.e_impact + e_var
+    let p_new = Math.max(Math.min(old_p_score + p_mod, 100), 0) // Constrain to range [0,100]
+    let e_new = Math.max(Math.min(old_e_score + e_mod, 100), 0) // Constrain to range [0,100]
+    return [p_new, e_new, modifiers.result]
+  }
+
   function processScan(data) {
     const idx = gamestate.subround / 2
-    let p_new = players[idx].p_score
-    let e_new = players[idx].e_score
-    let p_mod, e_mod
-    let new_result = ''
+    let p_old = players[idx].p_score
+    let e_old = players[idx].e_score
+    let modifiers
     if (data.charAt(0) === 'Y') {
       // Apply positive effects to player's stats
-      // Need to add in variance
-      p_mod = situations[gamestate.round].yes.p_impact
-      e_mod = situations[gamestate.round].yes.e_impact
-      new_result = situations[gamestate.round].yes.result
+      modifiers = situations[gamestate.round].yes
     } else if (data.charAt(0) === 'N') {
       // Apply negative effects to player's stats
-      // Need to add in variance
-      p_mod = situations[gamestate.round].no.p_impact
-      e_mod = situations[gamestate.round].no.e_impact
-      new_result = situations[gamestate.round].no.result
+      modifiers = situations[gamestate.round].no
     } else {
       // Decide whether to apply positive, negative or random stats to player
       let choice = 2 * Math.random() - 1 // In range [-1, 1]
       if (Math.abs(choice) < situations[gamestate.round].random.threshold) {
         // Apply random effect to player's stats
-        // Need to add in variance
-        p_mod = situations[gamestate.round].random.p_impact
-        e_mod = situations[gamestate.round].random.e_impact
-        new_result = situations[gamestate.round].random.result
+        modifiers = situations[gamestate.round].random
       } else if (choice > 0) {
         // Apply positive effect
-        // Need to add in variance
-        p_mod = situations[gamestate.round].yes.p_impact
-        e_mod = situations[gamestate.round].yes.e_impact
-        new_result = situations[gamestate.round].yes.result
+        modifiers = situations[gamestate.round].yes
       } else {
         // Apply negative effect
-        // Need to add in variance
-        p_mod = situations[gamestate.round].no.p_impact
-        e_mod = situations[gamestate.round].no.e_impact
-        new_result = situations[gamestate.round].no.result
+        modifiers = situations[gamestate.round].no
       }
     }
-    p_new = Math.max(Math.min(p_new + p_mod, 100), 0) // Constrain to range [0,100]
-    e_new = Math.max(Math.min(e_new + e_mod, 100), 0) // Constrain to range [0,100]
+    const [p_new, e_new, new_result] = updateScores(p_old, e_old, modifiers)
     let new_player = {
       ...players[idx],
+      old_p_score: p_old,
+      old_e_score: e_old,
       p_score: p_new,
       e_score: e_new
     }
@@ -69,12 +64,6 @@ export default () => {
       new_player,
       ...players.slice(idx + 1)
     ])
-    console.log(
-      'Last result should be changed to',
-      new_result,
-      'Last card to',
-      data
-    )
     setGamestate({
       ...gamestate,
       lastresult: new_result,
@@ -110,11 +99,15 @@ export default () => {
             ) : gamestate.subround % 2 === 0 ? (
               <Scanner
                 last={gamestate.lastcard}
-                player={players[gamestate.subround / 2].name}
+                player={players[gamestate.subround / 2]}
                 onScan={processScan}
               />
             ) : (
-              <PostScan desc={gamestate.lastresult} onAdvance={nextSubRound} />
+              <PostScan
+                desc={gamestate.lastresult}
+                player={players[Math.floor(gamestate.subround / 2)]}
+                onAdvance={nextSubRound}
+              />
             )}
           </div>
         </main>
