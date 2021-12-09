@@ -11,7 +11,7 @@
   "keywords": [],
   "author": "SIFT",
   "dependencies": {
-    "next": "^9.2.2",
+    "next": "^11.1.3",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
     "react-qr-reader": "^2.2.1",
